@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rekenen bij Mara</title>
+<style>
+body { font-family: Arial; background-color: #f3e5f5; text-align: center; }
+h1 { color: purple; }
+.menu, .submenu { margin: 15px; }
+.menu button, .submenu button, #door { padding: 10px 20px; margin: 5px; font-size: 16px; border-radius: 10px; border: none; background-color: #ce93d8; color: white; }
+.menu button:hover, .submenu button:hover, #door:hover { background-color: #ba68c8; }
+.box { background: white; margin: 15px auto; padding: 20px; border-radius: 15px; width: 90%; display: none; }
+input { padding: 5px; font-size: 16px; margin-top:5px;}
+#antwoord { margin-top: 10px; font-weight: bold; }
+</style>
+
+<script>
+let huidigType = '';
+let huidigSubType = '';
+let goedAntwoord = 0;
+
+function showBox(id){
+    document.querySelectorAll('.box').forEach(b=>b.style.display='none');
+    document.getElementById(id).style.display='block';
+    document.getElementById('antwoord').textContent='';
+}
+
+function startCategorie(type, subType=''){
+    huidigType = type;
+    huidigSubType = subType;
+    showBox('oefenBox');
+    nieuweSom();
+}
+
+function nieuweSom(){
+    let vraag = '';
+    
+    if(huidigType === 'min'){
+        let a = Math.floor(Math.random()*100);
+        let b = Math.floor(Math.random()*a);
+        goedAntwoord = a - b;
+        vraag = a + " - " + b;
+    }
+
+    if(huidigType === 'plus'){
+        let a = Math.floor(Math.random()*100);
+        let b = Math.floor(Math.random()*100);
+        goedAntwoord = a + b;
+        vraag = a + " + " + b;
+    }
+
+    if(huidigType === 'delen'){
+        let b = Math.floor(Math.random()*9)+1;
+        let goed = Math.floor(Math.random()*10)+1;
+        let a = b * goed;
+        goedAntwoord = goed;
+        vraag = a + " ÷ " + b;
+    }
+
+    if(huidigType === 'breuken'){
+        let a = Math.floor(Math.random()*4)+1;
+        let b = Math.floor(Math.random()*4)+1;
+        let c = Math.floor(Math.random()*4)+1;
+        let d = Math.floor(Math.random()*4)+1;
+
+        if(huidigSubType === 'plus'){
+            goedAntwoord = (a/b) + (c/d);
+            vraag = a+"/"+b+" + "+c+"/"+d;
+        }
+        if(huidigSubType === 'min'){
+            goedAntwoord = (a/b) - (c/d);
+            vraag = a+"/"+b+" - "+c+"/"+d;
+        }
+        if(huidigSubType === 'delen'){
+            goedAntwoord = (a/b) / (c/d);
+            vraag = a+"/"+b+" ÷ "+c+"/"+d;
+        }
+    }
+
+    document.getElementById('somLabel').textContent = "Reken uit: " + vraag;
+    document.getElementById('somInput').value = '';
+    document.getElementById('antwoord').textContent = '';
+}
+
+function checkAnswer(){
+    let userInput = parseFloat(document.getElementById('somInput').value);
+    let result = document.getElementById('antwoord');
+
+    if(Math.abs(userInput - goedAntwoord) < 0.01){
+        result.textContent = "Goed gedaan! ✅";
+        result.style.color = "green";
+    } else {
+        result.textContent = "Fout 😅 goed antwoord: " + goedAntwoord;
+        result.style.color = "red";
+    }
+}
+
+function door(){
+    nieuweSom();
+}
+</script>
+</head>
+
+<body>
+
+<h1>📚 Rekenen bij Mara 💜</h1>
+
+<div class="menu">
+    <button onclick="showBox('breukenMenu')">Breuken</button>
+    <button onclick="startCategorie('min')">Min</button>
+    <button onclick="startCategorie('plus')">Plus</button>
+    <button onclick="startCategorie('delen')">Delen</button>
+</div>
+
+<div class="box" id="breukenMenu">
+    <h2>Breuken</h2>
+    <p>Kies wat je wilt oefenen:</p>
+    <div class="submenu">
+        <button onclick="startCategorie('breuken','min')">Min Breuken</button>
+        <button onclick="startCategorie('breuken','plus')">Plus Breuken</button>
+        <button onclick="startCategorie('breuken','delen')">Delen door Breuken</button>
+    </div>
+</div>
+
+<div class="box" id="oefenBox">
+    <h2>Oefenen</h2>
+    <p id="somLabel"></p>
+    <input type="number" id="somInput"><br>
+    <button onclick="checkAnswer()">Check</button>
+    <button id="door" onclick="door()">Door</button>
+    <div id="antwoord"></div>
+</div>
+
+</body>
+</html>

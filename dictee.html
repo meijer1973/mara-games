@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dictee Groep 8</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #a29bfe, #74b9ff);
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #6c5ce7;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        input {
+            padding: 10px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Dictee Groep 8</h1>
+
+<div class="box">
+    <p>Klik op de knop en luister 👇</p>
+    <button onclick="spreek()">🔊 Luister</button>
+    <br>
+    <input type="text" id="antwoord" placeholder="Typ het woord">
+    <br>
+    <button onclick="check()">Check</button>
+    <button onclick="volgende()">Volgende</button>
+    <p id="resultaat"></p>
+</div>
+
+<script>
+// Groep 8 woorden (best moeilijker)
+let woorden = [
+"belangrijk", "verschillend", "moeilijk", "natuurlijk", "mogelijk",
+"eigenlijk", "waarschijnlijk", "onmiddellijk", "verschijnsel", "verantwoordelijk",
+"bijvoorbeeld", "geschiedenis", "onderwijs", "milieu", "ontwikkeling",
+"maatschappij", "verschillende", "toekomst", "probleem", "oplossing",
+"avontuur", "verhaal", "begrijpen", "veranderen", "gebeuren"
+];
+
+let huidigWoord = "";
+
+function nieuwWoord() {
+    let randomIndex = Math.floor(Math.random() * woorden.length);
+    huidigWoord = woorden[randomIndex];
+    document.getElementById("antwoord").value = "";
+    document.getElementById("resultaat").innerText = "";
+}
+
+function spreek() {
+    let spraak = new SpeechSynthesisUtterance(huidigWoord);
+    spraak.lang = "nl-NL";
+    speechSynthesis.speak(spraak);
+}
+
+function check() {
+    let antwoord = document.getElementById("antwoord").value.toLowerCase().trim();
+
+    if (antwoord === huidigWoord) {
+        document.getElementById("resultaat").innerText = "Goed gedaan! 🎉";
+    } else {
+        document.getElementById("resultaat").innerText = "Fout! Het woord was: " + huidigWoord;
+    }
+}
+
+function volgende() {
+    nieuwWoord();
+}
+
+// start meteen met een woord
+nieuwWoord();
+</script>
+
+</body>
+</html>

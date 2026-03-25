@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelletjes van Mara</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+        .back { position: absolute; top: 15px; left: 15px; text-decoration: none; font-size: 18px; color: #6c5ce7; }
+        h1 { font-size: 2em; margin-bottom: 20px; }
+        .nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 25px; }
+        .nav button {
+            background: #6c5ce7; color: white; border: none;
+            padding: 10px 18px; border-radius: 12px; font-size: 14px; cursor: pointer;
+        }
+        .nav button:hover { background: #5b4cdb; }
+        .nav button.active { background: #e84393; }
+        .card {
+            background: white; max-width: 400px; margin: 0 auto;
+            padding: 25px; border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .card.active { display: block; }
+        .card h2 { margin-bottom: 15px; color: #6c5ce7; }
+        .card p { margin: 8px 0; }
+        input[type="number"], input[type="text"] {
+            padding: 10px; border-radius: 10px; border: 2px solid #ddd;
+            font-size: 16px; text-align: center; width: 120px; outline: none;
+        }
+        input:focus { border-color: #a29bfe; }
+        .btn {
+            background: #6c5ce7; color: white; border: none;
+            padding: 10px 20px; border-radius: 10px; font-size: 15px;
+            cursor: pointer; margin: 5px;
+        }
+        .btn:hover { background: #5b4cdb; }
+        .color-box { height: 100px; border-radius: 12px; margin: 10px 0; cursor: pointer; }
+        .result { margin-top: 10px; font-weight: bold; min-height: 1.5em; }
+    </style>
+</head>
+<body>
+    <a class="back" href="index.html">&#8592; Terug</a>
+    <h1>Spelletjes van Mara 🎮</h1>
+
+    <div class="nav">
+        <button onclick="showGame('click')" id="nav-click">Klik spel</button>
+        <button onclick="showGame('guess')" id="nav-guess">Raad getal</button>
+        <button onclick="showGame('rps')" id="nav-rps">Steen Papier Schaar</button>
+        <button onclick="showGame('color')" id="nav-color">Kleur klik</button>
+        <button onclick="showGame('math')" id="nav-math">Rekenspel</button>
+        <button onclick="showGame('coin')" id="nav-coin">Muntje raden</button>
+        <button onclick="showGame('reaction')" id="nav-reaction">Reactie spel</button>
+    </div>
+
+    <!-- Klik spel -->
+    <div class="card" id="game-click">
+        <h2>Klik spel</h2>
+        <p>Score: <span id="clickScore">0</span></p>
+        <p>Tijd: <span id="clickTime">10</span>s</p>
+        <button class="btn" id="clickBtn" onclick="clickGame()">Start</button>
+    </div>
+
+    <!-- Raad getal -->
+    <div class="card" id="game-guess">
+        <h2>Raad het getal (1 - 10)</h2>
+        <input type="number" id="guessInput" min="1" max="10">
+        <button class="btn" onclick="checkGuess()">Check</button>
+        <button class="btn" onclick="newGuessGame()">Nieuw</button>
+        <p class="result" id="guessResult"></p>
+    </div>
+
+    <!-- Steen Papier Schaar -->
+    <div class="card" id="game-rps">
+        <h2>Steen Papier Schaar</h2>
+        <button class="btn" onclick="playRPS('steen')">🪨 Steen</button>
+        <button class="btn" onclick="playRPS('papier')">📄 Papier</button>
+        <button class="btn" onclick="playRPS('schaar')">✂️ Schaar</button>
+        <p class="result" id="rpsResult"></p>
+    </div>
+
+    <!-- Kleur klik -->
+    <div class="card" id="game-color">
+        <h2>Kleur klik</h2>
+        <div class="color-box" id="colorBox" onclick="clickColor()"></div>
+        <p>Score: <span id="colorScore">0</span></p>
+    </div>
+
+    <!-- Rekenspel -->
+    <div class="card" id="game-math">
+        <h2>Rekenspel</h2>
+        <p id="mathQuestion"></p>
+        <input type="number" id="mathInput">
+        <button class="btn" onclick="checkMath()">Check</button>
+        <button class="btn" onclick="newMath()">Nieuwe</button>
+        <p class="result" id="mathResult"></p>
+    </div>
+
+    <!-- Muntje raden -->
+    <div class="card" id="game-coin">
+        <h2>Muntje raden</h2>
+        <button class="btn" onclick="flipCoin('kop')">Kop</button>
+        <button class="btn" onclick="flipCoin('munt')">Munt</button>
+        <p class="result" id="coinResult"></p>
+    </div>
+
+    <!-- Reactie spel -->
+    <div class="card" id="game-reaction">
+        <h2>Reactie spel</h2>
+        <button class="btn" onclick="startReaction()">Start</button>
+        <button class="btn" id="reactionClickBtn" onclick="clickReaction()">Klik!</button>
+        <p class="result" id="reactionResult"></p>
+    </div>
+
+<script>
+// Navigation
+function showGame(name) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('game-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+}
+showGame('click');
+
+// Klik spel
+let clickScore = 0, clickTime = 10, clickPlaying = false, clickTimer = null;
+function clickGame() {
+    if (!clickPlaying) {
+        clickScore = 0; clickTime = 10; clickPlaying = true;
+        document.getElementById('clickScore').textContent = 0;
+        document.getElementById('clickTime').textContent = 10;
+        document.getElementById('clickBtn').textContent = 'Klik!';
+        clickTimer = setInterval(() => {
+            clickTime--;
+            document.getElementById('clickTime').textContent = clickTime;
+            if (clickTime <= 0) {
+                clearInterval(clickTimer);
+                clickPlaying = false;
+                document.getElementById('clickBtn').textContent = 'Start';
+            }
+        }, 1000);
+    } else {
+        clickScore++;
+        document.getElementById('clickScore').textContent = clickScore;
+    }
+}
+
+// Raad getal
+let randomNumber = Math.floor(Math.random() * 10) + 1;
+function checkGuess() {
+    const g = parseInt(document.getElementById('guessInput').value);
+    const el = document.getElementById('guessResult');
+    if (g === randomNumber) el.textContent = "Goed geraden! 🎉";
+    else if (g < randomNumber) el.textContent = "Te laag ⬇️";
+    else el.textContent = "Te hoog ⬆️";
+}
+function newGuessGame() {
+    randomNumber = Math.floor(Math.random() * 10) + 1;
+    document.getElementById('guessInput').value = '';
+    document.getElementById('guessResult').textContent = '';
+}
+
+// Steen Papier Schaar
+function playRPS(player) {
+    const choices = ["steen","papier","schaar"];
+    const computer = choices[Math.floor(Math.random() * 3)];
+    let result;
+    if (player === computer) result = "Gelijkspel 🤝";
+    else if (
+        (player==="steen" && computer==="schaar") ||
+        (player==="papier" && computer==="steen") ||
+        (player==="schaar" && computer==="papier")
+    ) result = "Je wint! 🎉";
+    else result = "Computer wint 😢 (" + computer + ")";
+    document.getElementById('rpsResult').textContent = result;
+}
+
+// Kleur klik
+const colors = ["#e74c3c","#2ecc71","#3498db","#f1c40f","#e84393","#00cec9"];
+let colorScore = 0;
+function changeColor() {
+    document.getElementById('colorBox').style.background = colors[Math.floor(Math.random() * colors.length)];
+}
+function clickColor() {
+    colorScore++;
+    document.getElementById('colorScore').textContent = colorScore;
+    changeColor();
+}
+changeColor();
+
+// Rekenspel
+let mathA = 0, mathB = 0;
+function newMath() {
+    mathA = Math.floor(Math.random() * 10);
+    mathB = Math.floor(Math.random() * 10);
+    document.getElementById('mathQuestion').textContent = mathA + " + " + mathB + " = ?";
+    document.getElementById('mathInput').value = '';
+    document.getElementById('mathResult').textContent = '';
+}
+function checkMath() {
+    const ans = parseInt(document.getElementById('mathInput').value);
+    document.getElementById('mathResult').textContent = (ans === mathA + mathB) ? "Goed! 🎉" : "Fout 😅 het was " + (mathA + mathB);
+}
+newMath();
+
+// Muntje raden
+function flipCoin(choice) {
+    const result = Math.random() < 0.5 ? "kop" : "munt";
+    document.getElementById('coinResult').textContent =
+        choice === result ? "Goed geraden! 🎉 (" + result + ")" : "Fout 😅 het was " + result;
+}
+
+// Reactie spel
+let reactionStart = null, reactionTimeout = null;
+function startReaction() {
+    document.getElementById('reactionResult').textContent = "Wacht op groen...";
+    document.getElementById('reactionClickBtn').style.background = '#6c5ce7';
+    reactionStart = null;
+    clearTimeout(reactionTimeout);
+    reactionTimeout = setTimeout(() => {
+        reactionStart = Date.now();
+        document.getElementById('reactionClickBtn').style.background = '#00b894';
+        document.getElementById('reactionResult').textContent = "NU! Klik!";
+    }, Math.random() * 3000 + 1000);
+}
+function clickReaction() {
+    if (reactionStart) {
+        document.getElementById('reactionResult').textContent = "Reactietijd: " + (Date.now() - reactionStart) + " ms ⚡";
+        document.getElementById('reactionClickBtn').style.background = '#6c5ce7';
+        reactionStart = null;
+    } else {
+        document.getElementById('reactionResult').textContent = "Te vroeg! Klik eerst op Start 😅";
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-pop Emoji Game</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .back { position: absolute; top: 15px; left: 15px; text-decoration: none; font-size: 18px; color: #6c5ce7; }
+        h1 { font-size: 2em; margin-bottom: 15px; }
+        .emoji { font-size: 4em; margin: 20px 0; }
+        input {
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            text-align: center;
+            width: 250px;
+            outline: none;
+        }
+        input:focus { border-color: #a29bfe; }
+        button {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        button:hover { background: #5b4cdb; }
+        .feedback { margin-top: 15px; font-size: 1.2em; min-height: 1.5em; }
+        .score { margin-top: 10px; font-weight: bold; font-size: 1.1em; }
+        .video-container { width: 0; height: 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <a class="back" href="index.html">&#8592; Terug</a>
+    <h1>🎤 K-pop Emoji Game</h1>
+    <div class="video-container">
+        <iframe id="videoFrame" width="0" height="0" allow="autoplay" title="music"></iframe>
+    </div>
+    <div class="emoji" id="emojiDisplay"></div>
+    <input type="text" id="guessInput" placeholder="Guess the group..." autofocus>
+    <button onclick="checkAnswer()">Check</button>
+    <p class="feedback" id="feedback"></p>
+    <p class="score">Score: <span id="score">0</span></p>
+
+<script>
+const allGroups = [
+  { name: "bts", emojis: ["💣👦","💜🔥"], video: "https://www.youtube.com/embed/gdZLi9oWNZg" },
+  { name: "blackpink", emojis: ["🖤💗👑","🔥👧"], video: "https://www.youtube.com/embed/IO1Nl9ErTsI" },
+  { name: "twice", emojis: ["🍭💖","👧✨"], video: "https://www.youtube.com/embed/k6jqx9kZgPM" },
+  { name: "stray kids", emojis: ["🐺🔥","⚡"], video: "https://www.youtube.com/embed/TQTlCHxyuu8" },
+  { name: "newjeans", emojis: ["👖🐰","💙"], video: "https://www.youtube.com/embed/JsOOis4bBFg" },
+  { name: "exo", emojis: ["👽✨","❄️🔥"], video: "https://www.youtube.com/embed/pSudEWBAYRE" },
+  { name: "itzy", emojis: ["🔥👧","💃"], video: "https://www.youtube.com/embed/fE2h3lGlOsk" },
+  { name: "ive", emojis: ["👑✨","💅"], video: "https://www.youtube.com/embed/Y8JFxS1HlDo" },
+  { name: "le sserafim", emojis: ["🔥👠","🌙"], video: "https://www.youtube.com/embed/4vbDFu0PUew" },
+  { name: "aespa", emojis: ["🤖✨","💜"], video: "https://www.youtube.com/embed/WPdWvnAAurg" },
+  { name: "gidle", emojis: ["🔥👑","💃"], video: "https://www.youtube.com/embed/7HDeem-JaSY" },
+  { name: "seventeen", emojis: ["💎👦","🎤"], video: "https://www.youtube.com/embed/gRnuFC4Ualw" },
+  { name: "enhypen", emojis: ["🧛‍♂️🔥","🌑"], video: "https://www.youtube.com/embed/HOciAVeq_HU" },
+  { name: "txt", emojis: ["✨👦","🌈"], video: "https://www.youtube.com/embed/Os_6c5j6YiQ" },
+  { name: "red velvet", emojis: ["❤️🎂","👧"], video: "https://www.youtube.com/embed/J_CFBjAyPWE" },
+  { name: "nct", emojis: ["🌱👦","⚡"], video: "https://www.youtube.com/embed/2OvyA2__Eas" },
+  { name: "ateez", emojis: ["🏴‍☠️🔥","⚓"], video: "https://www.youtube.com/embed/nKU4OVH18mE" },
+  { name: "treasure", emojis: ["💎🔥","👦"], video: "https://www.youtube.com/embed/UKXeico0yeI" },
+  { name: "stayc", emojis: ["💖✨","👧"], video: "https://www.youtube.com/embed/Xmxcnf2v_gs" },
+  { name: "nmixx", emojis: ["🌊✨","👧"], video: "https://www.youtube.com/embed/p1bjnyDqI9k" }
+];
+
+function shuffle(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let queue = shuffle(allGroups);
+let index = 0;
+let score = 0;
+
+function showQuestion() {
+  const group = queue[index];
+  const emoji = group.emojis[Math.floor(Math.random() * group.emojis.length)];
+  document.getElementById("emojiDisplay").textContent = emoji;
+  document.getElementById("videoFrame").src = group.video + "?autoplay=1";
+  document.getElementById("guessInput").value = "";
+  document.getElementById("feedback").textContent = "";
+}
+
+function checkAnswer() {
+  const guess = document.getElementById("guessInput").value.toLowerCase().trim();
+  const correct = queue[index].name;
+  if (guess === correct) {
+    score++;
+    document.getElementById("score").textContent = score;
+    document.getElementById("feedback").textContent = "Very good very nice 😄";
+  } else {
+    document.getElementById("feedback").textContent = "Wrong 😭 it was " + correct;
+  }
+  setTimeout(() => {
+    index++;
+    if (index >= queue.length) {
+      queue = shuffle(allGroups);
+      index = 0;
+    }
+    showQuestion();
+  }, 1500);
+}
+
+document.getElementById("guessInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") checkAnswer();
+});
+
+showQuestion();
+</script>
+</body>
+</html>
