@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mara's Juweeltjes</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fff5f7, #fce4ec, #f3e5f5, #e1f5fe);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header met logo */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        header .tagline {
+            margin-top: 5px;
+            color: #888;
+            font-size: 0.95em;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            margin-top: 12px;
+        }
+
+        nav a {
+            color: #555;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 0.9em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        nav a:hover {
+            background: #fce4ec;
+        }
+
+        nav a.active {
+            background: #f8bbd0;
+            color: #333;
+        }
+
+        /* Banner */
+        .banner {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .banner h1 {
+            font-size: 2.4em;
+            color: #444;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        .banner p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Product grid */
+        .shop {
+            max-width: 1100px;
+            margin: 30px auto 60px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        /* Foto met flip */
+        .photo-flip {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            background: #f5f5f5;
+            overflow: hidden;
+            -webkit-tap-highlight-color: rgba(244, 143, 177, 0.3);
+            user-select: none;
+        }
+
+        .photo-flip:active {
+            transform: scale(0.97);
+        }
+
+        .photo-flip img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .photo-flip .photo-back {
+            opacity: 0;
+        }
+
+        .photo-flip.flipped .photo-front {
+            opacity: 0;
+        }
+
+        .photo-flip.flipped .photo-back {
+            opacity: 1;
+        }
+
+        .photo-flip .hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.95);
+            color: #d63384;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            animation: wiebel 2s ease-in-out infinite;
+        }
+
+        @keyframes wiebel {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        .photo-flip.flipped .hint {
+            background: rgba(244, 143, 177, 0.95);
+            color: white;
+        }
+
+        /* Product info */
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            font-size: 1.2em;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .product-info .desc {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            min-height: 40px;
+        }
+
+        .stars-row {
+            text-align: center;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 1.2em;
+            letter-spacing: 3px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 0.9em;
+            background: rgba(255,255,255,0.4);
+        }
+
+        /* Placeholder als foto's nog niet geüpload zijn */
+        .photo-flip.no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .photo-flip.no-image::after {
+            content: attr(data-naam);
+            font-size: 1.3em;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            line-height: 1.3;
+        }
+
+        /* Kleur per armbandje */
+        .photo-flip.no-image[data-kleur="groen"]  { background: linear-gradient(135deg, #4caf50, #a5d6a7, #c8e6c9); }
+        .photo-flip.no-image[data-kleur="goud"]   { background: linear-gradient(135deg, #ffd54f, #fff9c4, #ffecb3); }
+        .photo-flip.no-image[data-kleur="blauw"]  { background: linear-gradient(135deg, #1976d2, #64b5f6, #bbdefb); }
+        .photo-flip.no-image[data-kleur="blauwroze"] { background: linear-gradient(135deg, #42a5f5, #f8bbd0, #ce93d8); }
+        .photo-flip.no-image[data-kleur="paars"]  { background: linear-gradient(135deg, #7e57c2, #f48fb1, #ffd54f); }
+        .photo-flip.no-image[data-kleur="roze"]   { background: linear-gradient(135deg, #f48fb1, #fce4ec, #ffffff); }
+        .photo-flip.no-image[data-kleur="goudmini"] { background: linear-gradient(135deg, #ffb300, #fff3e0, #ffe082); }
+        .photo-flip.no-image[data-kleur="paarsgoud"] { background: linear-gradient(135deg, #6a1b9a, #ba68c8, #ffd54f); }
+
+        /* === Ontwerp je eigen armbandje === */
+        .custom-product {
+            background: linear-gradient(135deg, #fff5f7 0%, #fce4ec 50%, #f3e5f5 100%);
+            border: 3px dashed #f48fb1;
+        }
+
+        .custom-bracelet {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .custom-preview {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+            border-radius: 16px;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+
+        .custom-preview svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .custom-bracelet[data-kleur="regenboog"] .custom-preview svg {
+            animation: spin 12s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .kleur-kiezer {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .kleur-knop {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            padding: 0;
+        }
+
+        .kleur-knop:hover {
+            transform: scale(1.15);
+        }
+
+        .kleur-knop.actief {
+            border-color: #d63384;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 3px #fce4ec, 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #f8bbd0;
+            border-radius: 25px;
+            font-size: 1em;
+            font-family: inherit;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .custom-input:focus {
+            border-color: #f48fb1;
+            box-shadow: 0 0 0 3px rgba(244, 143, 177, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .banner h1 { font-size: 1.8em; }
+            header img { max-width: 130px; }
+            nav a { font-size: 0.85em; margin: 0 5px; padding: 4px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="images/logo.jpg" alt="Mara's Juweeltjes" onerror="this.style.display='none'">
+    <p class="tagline">handgemaakte armbandjes met liefde ✨</p>
+    <nav>
+        <a href="#shop" class="active">Winkel</a>
+        <a href="#ontwerp">Ontwerp je eigen</a>
+    </nav>
+</header>
+
+<section class="banner">
+    <h1>Welkom in mijn winkel!</h1>
+    <p>Klik op een foto om hem op de pols te zien 👇</p>
+</section>
+
+<main class="shop" id="shop">
+
+    <!-- Armband 1: groen -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="groen" data-naam="💚 Groene Parel">
+            <img class="photo-front" src="images/armband1-a.jpg" alt="Groene armband">
+            <img class="photo-back" src="images/armband1-b.jpg" alt="Groene armband op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Groene Parel Armband</h3>
+            <p class="desc">Vrolijk groen met witte parels, perfect voor de zomer 🌿</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 2: goud -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="goud" data-naam="✨ Goud & Parel">
+            <img class="photo-front" src="images/armband2-a.jpg" alt="Gouden armband op pols">
+            <img class="photo-back" src="images/armband2-b.jpg" alt="Gouden armband">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Goud & Parel Armband</h3>
+            <p class="desc">Chique goud met witte parels, voor speciale dagen ✨</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 3: blauw met bloem -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="blauw" data-naam="🌸 Blauwe Bloem">
+            <img class="photo-front" src="images/armband3-a.jpg" alt="Blauwe armband met bloem op pols">
+            <img class="photo-back" src="images/armband3-b.jpg" alt="Blauwe armband met bloem">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Blauwe Bloem Armband</h3>
+            <p class="desc">Verschillende tintjes blauw met een schattig bloemetje 🌸</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 4: blauw met roze parels -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="blauwroze" data-naam="💗 Blauw & Roze Parel">
+            <img class="photo-front" src="images/armband4-a.jpg" alt="Blauwe armband met roze parels op pols">
+            <img class="photo-back" src="images/armband4-b.jpg" alt="Blauwe armband met roze parels">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Blauw & Roze Parel Armband</h3>
+            <p class="desc">Stoere blauwe tintjes met lieve roze parels 💗</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 5: paars / blauw / roze met goud -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="paars" data-naam="💜 Paars Blauw & Goud">
+            <img class="photo-front" src="images/armband5-a.jpg" alt="Paars-blauw-roze armband met goud op pols">
+            <img class="photo-back" src="images/armband5-b.jpg" alt="Paars-blauw-roze armband met goud">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Paars Blauw & Goud Armband</h3>
+            <p class="desc">Vrolijke mix van paars, blauw en gouden kraaltjes 💜</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 6: roze met witte parels -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="roze" data-naam="🌷 Roze Parel">
+            <img class="photo-front" src="images/armband6-a.jpg" alt="Roze parel armband op pols">
+            <img class="photo-back" src="images/armband6-b.jpg" alt="Roze parel armband">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Roze Parel Armband</h3>
+            <p class="desc">Lief en zacht roze met grote witte parels 🌷</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 7: gouden parel klein -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="goudmini" data-naam="🤍 Goud & Mini Parel">
+            <img class="photo-front" src="images/armband7-a.jpg" alt="Gouden parel armband op pols">
+            <img class="photo-back" src="images/armband7-b.jpg" alt="Gouden parel armband">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Goud & Mini Parel Armband</h3>
+            <p class="desc">Sierlijke gouden kraaltjes met witte minipareltjes 🤍</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 8: paars/goud met hartjes -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="paarsgoud" data-naam="💜 Paars & Gouden Hartjes">
+            <img class="photo-front" src="images/armband8-a.jpg" alt="Paarse armband met gouden hartjes">
+            <img class="photo-back" src="images/armband8-b.jpg" alt="Paarse armband met gouden hartjes">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Paars & Gouden Hartjes Armband</h3>
+            <p class="desc">Mooie paarse kraaltjes met glimmende gouden hartjes 💜</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 9: roze/wit met goud -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="roze" data-naam="🌸 Roze & Goud">
+            <img class="photo-front" src="images/armband9-a.jpg" alt="Roze armband met gouden kraaltjes">
+            <img class="photo-back" src="images/armband9-b.jpg" alt="Roze armband met goud op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Roze & Goud Armband</h3>
+            <p class="desc">Vrolijke roze kleurtjes met glimmende gouden kraaltjes 💗</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 10: pastel roze/blauw/wit -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="blauwroze" data-naam="🦄 Pastel Mix">
+            <img class="photo-front" src="images/armband10-a.jpg" alt="Pastel armband">
+            <img class="photo-back" src="images/armband10-b.jpg" alt="Pastel armband op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Pastel Mix Armband</h3>
+            <p class="desc">Zachte pastel tintjes roze, blauw en wit 🌈</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 11: blauw mix -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="blauw" data-naam="🌊 Blauwe Mix">
+            <img class="photo-front" src="images/armband11-a.jpg" alt="Blauwe mix armband">
+            <img class="photo-back" src="images/armband11-b.jpg" alt="Blauwe mix armband op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Oceaan Blauw Armband</h3>
+            <p class="desc">Lichte en donkerblauwe kraaltjes als de zee 🌊</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 12: blauw met hartje -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="blauw" data-naam="💙 Blauw met Hartje">
+            <img class="photo-front" src="images/armband12-a.jpg" alt="Blauwe armband met hartje">
+            <img class="photo-back" src="images/armband12-b.jpg" alt="Blauwe armband met hartje op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Blauw Hartje Armband</h3>
+            <p class="desc">Stoere blauwe kraaltjes met een lief blauw hartje 💙</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 13: paars/wit -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="paars" data-naam="💜 Paars & Wit">
+            <img class="photo-front" src="images/armband13-a.jpg" alt="Paarse armband met wit">
+            <img class="photo-back" src="images/armband13-b.jpg" alt="Paarse armband met wit op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Paars & Wit Armband</h3>
+            <p class="desc">Lieve paarse kraaltjes met witte streepjes 🪻</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 14: paars met sterretje -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="paars" data-naam="⭐ Paars Sterretje">
+            <img class="photo-front" src="images/armband14-a.jpg" alt="Paarse armband met sterretje">
+            <img class="photo-back" src="images/armband14-b.jpg" alt="Paarse armband met sterretje op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Paars Sterretjes Armband</h3>
+            <p class="desc">Paarse en witte kraaltjes met een glimmend sterretje ⭐</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 15: wit parel met roze hartje -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="roze" data-naam="🤍 Witte Parel & Hart">
+            <img class="photo-front" src="images/armband15-a.jpg" alt="Witte parel armband met roze hartje">
+            <img class="photo-back" src="images/armband15-b.jpg" alt="Witte parel armband met roze hartje op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Witte Parel met Roze Hartje</h3>
+            <p class="desc">Sierlijke witte parels met een lief roze hartje 💕</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Armband 16: oranje/paars met bloem -->
+    <article class="product">
+        <div class="photo-flip" data-kleur="paars" data-naam="🌺 Zonsondergang Bloem">
+            <img class="photo-front" src="images/armband16-a.jpg" alt="Oranje en paarse armband met bloem">
+            <img class="photo-back" src="images/armband16-b.jpg" alt="Oranje en paarse armband met bloem op pols">
+            <span class="hint">klik 🔄</span>
+        </div>
+        <div class="product-info">
+            <h3>Zonsondergang Bloem Armband</h3>
+            <p class="desc">Oranje en paarse kleuren met een schattig roze bloemetje 🌺</p>
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+    <!-- Ontwerp je eigen armbandje! -->
+    <article class="product custom-product" id="ontwerp">
+        <div class="custom-bracelet" data-kleur="roze" id="custom-bracelet">
+            <div class="custom-preview" id="custom-preview"></div>
+            <div class="kleur-kiezer">
+                <button class="kleur-knop actief" data-kleur="roze" style="background:linear-gradient(135deg,#f48fb1,#fce4ec)" title="Roze"></button>
+                <button class="kleur-knop" data-kleur="blauw" style="background:linear-gradient(135deg,#1976d2,#bbdefb)" title="Blauw"></button>
+                <button class="kleur-knop" data-kleur="paars" style="background:linear-gradient(135deg,#7e57c2,#ce93d8)" title="Paars"></button>
+                <button class="kleur-knop" data-kleur="groen" style="background:linear-gradient(135deg,#4caf50,#a5d6a7)" title="Groen"></button>
+                <button class="kleur-knop" data-kleur="goud" style="background:linear-gradient(135deg,#ffd54f,#fff9c4)" title="Goud"></button>
+                <button class="kleur-knop" data-kleur="regenboog" style="background:linear-gradient(135deg,#f48fb1,#ffd54f,#a5d6a7,#64b5f6,#ce93d8)" title="Regenboog"></button>
+            </div>
+        </div>
+        <div class="product-info">
+            <h3>✨ Ontwerp je eigen armbandje!</h3>
+            <p class="desc">Typ jouw naam of een lief woord en kies een kleur 💖</p>
+            <input type="text" id="custom-input" maxlength="12" placeholder="Typ hier je naam..." class="custom-input">
+            <div class="stars-row"><span class="stars">★★★★★</span></div>
+        </div>
+    </article>
+
+</main>
+
+<footer>
+    Made with 💖 by Mara
+</footer>
+
+<script>
+    // Maak elke foto-kaart klikbaar (extra robuust, ook als inline onclick faalt)
+    document.querySelectorAll('.photo-flip').forEach(function(flip) {
+        flip.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+    });
+
+    // Als een foto niet bestaat, verberg alleen die ene foto.
+    // Pas wanneer BEIDE foto's missen, toon de 💎 placeholder.
+    document.querySelectorAll('.photo-flip').forEach(function(flip) {
+        var imgs = flip.querySelectorAll('img');
+        var failed = 0;
+        imgs.forEach(function(img) {
+            img.addEventListener('error', function() {
+                this.style.visibility = 'hidden';
+                failed++;
+                if (failed >= imgs.length) {
+                    flip.classList.add('no-image');
+                }
+            });
+            if (img.complete && img.naturalWidth === 0) {
+                img.dispatchEvent(new Event('error'));
+            }
+        });
+    });
+
+    // === Ontwerp je eigen armbandje (echte armband met kraaltjes!) ===
+    var customInput = document.getElementById('custom-input');
+    var customBracelet = document.getElementById('custom-bracelet');
+    var customPreview = document.getElementById('custom-preview');
+
+    var paletten = {
+        roze:   { hoofd: '#ec407a', accent: '#f8bbd0', licht: '#fce4ec', letter: '#d63384' },
+        blauw:  { hoofd: '#1976d2', accent: '#64b5f6', licht: '#bbdefb', letter: '#1565c0' },
+        paars:  { hoofd: '#7e57c2', accent: '#ce93d8', licht: '#e1bee7', letter: '#6a1b9a' },
+        groen:  { hoofd: '#43a047', accent: '#81c784', licht: '#c8e6c9', letter: '#2e7d32' },
+        goud:   { hoofd: '#ffb300', accent: '#ffd54f', licht: '#fff9c4', letter: '#ef6c00' },
+        regenboog: { regenboog: ['#f48fb1','#ffd54f','#a5d6a7','#64b5f6','#ce93d8'], letter: '#d63384' }
+    };
+
+    function bouwArmband() {
+        var ruweTekst = (customInput.value || '').trim();
+        var tekst = ruweTekst === '' ? 'JOUW NAAM' : ruweTekst;
+        var letters = tekst.toUpperCase().replace(/\s+/g, '').slice(0, 12).split('');
+        var kleur = customBracelet.getAttribute('data-kleur');
+        var p = paletten[kleur] || paletten.roze;
+
+        var totaal = 22;
+        var cx = 130, cy = 130, r = 100, beadR = 14;
+
+        // Plaats letterbedeltjes gecentreerd bovenaan (bij index 0 = top)
+        var beads = new Array(totaal).fill(null);
+        var halfVoor = Math.floor(letters.length / 2);
+        for (var j = 0; j < letters.length; j++) {
+            var idx = (j - halfVoor + totaal) % totaal;
+            beads[idx] = letters[j];
+        }
+
+        var svg = '<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">';
+        // Touwtje (cirkel onder de kraaltjes)
+        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(120,120,120,0.25)" stroke-width="2"/>';
+
+        for (var i = 0; i < totaal; i++) {
+            var hoek = (i / totaal) * 2 * Math.PI - Math.PI / 2;
+            var x = cx + Math.cos(hoek) * r;
+            var y = cy + Math.sin(hoek) * r;
+
+            if (beads[i] !== null) {
+                // Letterbedeltje (wit vierkantje met letter)
+                var randKleur = kleur === 'regenboog' ? p.letter : p.hoofd;
+                svg += '<rect x="' + (x - beadR) + '" y="' + (y - beadR) + '" width="' + (beadR*2) + '" height="' + (beadR*2) + '" rx="4" ry="4" fill="white" stroke="' + randKleur + '" stroke-width="2"/>';
+                // Glanseffect
+                svg += '<rect x="' + (x - beadR + 3) + '" y="' + (y - beadR + 3) + '" width="' + (beadR*2 - 6) + '" height="' + (beadR/2) + '" rx="2" fill="rgba(255,255,255,0.6)"/>';
+                // Letter
+                svg += '<text x="' + x + '" y="' + (y + 1) + '" text-anchor="middle" dominant-baseline="central" font-family="Comic Sans MS, Comic Sans, cursive" font-weight="bold" font-size="' + (beadR * 1.3) + '" fill="' + p.letter + '">' + beads[i] + '</text>';
+            } else {
+                // Kraaltje in de gekozen kleur
+                var kleurKraaltje;
+                if (kleur === 'regenboog') {
+                    kleurKraaltje = p.regenboog[i % p.regenboog.length];
+                } else {
+                    var keuze = i % 3;
+                    kleurKraaltje = keuze === 0 ? p.hoofd : (keuze === 1 ? p.accent : p.licht);
+                }
+                svg += '<circle cx="' + x + '" cy="' + y + '" r="' + beadR + '" fill="' + kleurKraaltje + '" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>';
+                // Glansje
+                svg += '<ellipse cx="' + (x - beadR/3) + '" cy="' + (y - beadR/3) + '" rx="' + (beadR/3) + '" ry="' + (beadR/4.5) + '" fill="rgba(255,255,255,0.55)"/>';
+            }
+        }
+
+        svg += '</svg>';
+        customPreview.innerHTML = svg;
+    }
+
+    if (customInput) {
+        customInput.addEventListener('input', bouwArmband);
+    }
+
+    document.querySelectorAll('.kleur-knop').forEach(function(knop) {
+        knop.addEventListener('click', function() {
+            document.querySelectorAll('.kleur-knop').forEach(function(k) {
+                k.classList.remove('actief');
+            });
+            this.classList.add('actief');
+            customBracelet.setAttribute('data-kleur', this.getAttribute('data-kleur'));
+            bouwArmband();
+        });
+    });
+
+    // Bouw het armbandje meteen bij het laden
+    bouwArmband();
+</script>
+
+</body>
+</html>
